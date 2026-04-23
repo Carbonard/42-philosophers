@@ -6,7 +6,7 @@
 /*   By: rselva-2 <rselva-2@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/19 23:00:14 by rselva-2          #+#    #+#             */
-/*   Updated: 2026/04/23 03:33:35 by rselva-2         ###   ########.fr       */
+/*   Updated: 2026/04/23 18:09:47 by rselva-2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ int	eat(t_global_data *data)
 	if (display_msg(data, "has taken a fork", PURPLE))
 		return (1);
 	sem_wait(data->forks_sem);
-	sem_post(data->control_sem);
 	if (display_msg(data, "has taken a fork", PURPLE))
 		return (1);
 	sem_wait(data->death_sem);
@@ -30,6 +29,7 @@ int	eat(t_global_data *data)
 	usleep(data->time_to_eat * 1000);
 	sem_post(data->forks_sem);
 	sem_post(data->forks_sem);
+	sem_post(data->control_sem);
 	return (0);
 }
 
@@ -52,7 +52,6 @@ void	philo_routine(t_global_data *data)
 		sem_wait(data->death_sem);
 		data->meals++;
 		sem_post(data->death_sem);
-		usleep(data->time_to_eat * 1000);
 	}
 	pthread_join(monitor, NULL);
 	sem_close(data->forks_sem);
