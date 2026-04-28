@@ -6,7 +6,7 @@
 /*   By: rselva-2 <rselva-2@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/19 22:58:24 by rselva-2          #+#    #+#             */
-/*   Updated: 2026/04/23 00:25:06 by rselva-2         ###   ########.fr       */
+/*   Updated: 2026/04/28 17:23:16 by rselva-2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,48 +49,57 @@ static int	close_philos(t_global_data *data, int *philosophers)
 	return (0);
 }
 
-void	open_semaphores(t_global_data *data)
+void	close_semaphores(t_global_data *data)
 {
-	generate_name(data->forks_sem_name, "philo_forks", 42);
-	generate_name(data->write_sem_name, "philo_write", 42);
-	generate_name(data->double_check_sem_name, "philo_double_check", 42);
-	data->forks_sem = sem_open(data->forks_sem_name, O_CREAT | O_EXCL,
-			S_IRWXU | S_IRWXG | S_IRWXO, data->number_of_philosophers);
-	data->write_sem = sem_open(data->write_sem_name, O_CREAT | O_EXCL,
-			S_IRWXU | S_IRWXG | S_IRWXO, 1);
-	data->double_check_sem = sem_open(data->double_check_sem_name,
-			O_CREAT, S_IRWXU | S_IRWXG | S_IRWXO, 1);
-	data->control_sem = sem_open("philo_forks_control",
-			O_CREAT, S_IRWXU | S_IRWXG | S_IRWXO,
-			(data->number_of_philosophers + 1) / 2);
-	if (!data->forks_sem || !data->write_sem || !data->double_check_sem
-		|| !data->control_sem)
-	{
-		printf("semaphore already exists\n");
+	if (data->forks_sem != SEM_FAILED)
 		sem_close(data->forks_sem);
-		sem_unlink(data->forks_sem_name);
+	if (data->write_sem != SEM_FAILED)
 		sem_close(data->write_sem);
-		sem_unlink(data->write_sem_name);
-		exit(2);
+	if (data->death_sem != SEM_FAILED)
+		sem_close(data->death_sem);
+	if (data->control_sem != SEM_FAILED)
+		sem_close(data->control_sem);
+	if (data->data_sem != SEM_FAILED)
+		sem_close(data->data_sem);
+	if (data->iteration_sem != SEM_FAILED)
+		sem_close(data->iteration_sem);
+}
+
+static void	open_semaphores(t_global_data *data)
+{
+	data->forks_sem = create_sem("philo_fork", data->number_of_philosophers, 0);
+	data->write_sem = create_sem("philo_write", 1, 0);
+	data->death_sem = create_sem("philo_death", 0, 0);
+	data->iteration_sem = create_sem("philo_iteration", 0, 0);
+	data->control_sem = create_sem("philo_forks_control",
+			(data->number_of_philosophers + 1) / 2, 0);
+	if (!data->forks_sem || !data->write_sem || !data->death_sem
+		|| !data->control_sem || !data->iteration_sem)
+	{
+		printf("Error creating semaphores\n");
+		close_semaphores(data);
+		exit(ERROR_SEM);
 	}
-	sem_unlink(data->forks_sem_name);
-	sem_unlink(data->write_sem_name);
-	sem_unlink("philo_forks_control");
+	data->data_sem = SEM_FAILED;
 }
 
 int	manage_philosophers(t_global_data *data)
 {
-	int	*philosophers;
+	int			*philosophers;
+	pthread_t	iter_monitor;
+	pthread_t	sim_monitor;
 
 	open_semaphores(data);
 	philosophers = malloc(data->number_of_philosophers * sizeof(int));
 	if (!philosophers)
-		exit (1);
+		exit (ERROR_MALLOC);
 	init_philos(data, philosophers);
-	sem_close(data->forks_sem);
-	sem_close(data->write_sem);
-	sem_close(data->double_check_sem);
-	sem_close(data->control_sem);
+	data->data_sem = create_sem("philo_data", 1, 0);
+	pthread_create(&iter_monitor, NULL, monitorize_iterations, data);
+	pthread_create(&sim_monitor, NULL, stop_simulation, data);
+	pthread_join(iter_monitor, NULL);
+	pthread_join(sim_monitor, NULL);
+	close_semaphores(data);
 	close_philos(data, philosophers);
 	free(philosophers);
 	return (0);

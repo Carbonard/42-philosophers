@@ -6,7 +6,7 @@
 /*   By: rselva-2 <rselva-2@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/19 19:16:29 by rselva-2          #+#    #+#             */
-/*   Updated: 2026/04/23 01:21:58 by rselva-2         ###   ########.fr       */
+/*   Updated: 2026/04/28 17:36:56 by rselva-2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,11 @@
 
 enum e_error
 {
-	E_MALLOC = 1,
-	E_INIT_MUTEX = 1<1,
-	E_INIT_THREADS = 1<2,
-	E_JOIN_THREADS = 1<3,
-	E_DESTROY_MUTEX = 1<4
+	SUCCESS,
+	ERROR_MALLOC,
+	ERROR_SEM,
+	ERROR_INIT_THREADS,
+	ERROR_JOIN_THREADS,
 };
 
 typedef struct s_global_data
@@ -54,28 +54,28 @@ typedef struct s_global_data
 	long			number_of_times_each_philosopher_must_eat;
 	long			meals;
 	size_t			initial_time;
-	char			forks_sem_name[MAX_SEM_NAME];
 	int				is_dead;
 	size_t			last_eat;
 	sem_t			*forks_sem;
-	char			write_sem_name[MAX_SEM_NAME];
 	sem_t			*write_sem;
-	char			double_check_sem_name[MAX_SEM_NAME];
-	sem_t			*double_check_sem;
-	char			death_sem_name[MAX_SEM_NAME];
 	sem_t			*death_sem;
+	sem_t			*data_sem;
 	sem_t			*control_sem;
+	sem_t			*iteration_sem;
 }	t_global_data;
 
 int		check_input(int argc, char **argv);
 void	save_data(int argc, char **argv, t_global_data *data);
 size_t	get_current_time_ms(void);
 int		manage_philosophers(t_global_data *g_data);
-int		check_deaths(t_global_data *data);
-void	create_death_monitor(t_global_data *data, pthread_t *monitor);
+void	create_death_monitor(
+			t_global_data *data, pthread_t *monitor, pthread_t *sim_monitor);
 void	philo_routine(t_global_data *data);
-void	generate_name(char dest[MAX_SEM_NAME], char source[], int philo_num);
+sem_t	*create_sem(char *name, int num, int id);
 int		display_msg(t_global_data *data, const char *msg, char *color);
 void	display_death(t_global_data *data);
+void	close_semaphores(t_global_data *data);
+void	*monitorize_iterations(void *arg);
+void	*stop_simulation(void *args);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: rselva-2 <rselva-2@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/19 23:01:27 by rselva-2          #+#    #+#             */
-/*   Updated: 2026/04/23 00:50:44 by rselva-2         ###   ########.fr       */
+/*   Updated: 2026/04/28 17:59:00 by rselva-2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ size_t	get_current_time_ms(void)
 	return (time_in_ms);
 }
 
-void	generate_name(char dest[MAX_SEM_NAME], char source[], int philo_num)
+static void	generate_name(char dest[MAX_SEM_NAME], char source[], int id)
 {
 	int				i;
 	unsigned int	num;
@@ -47,13 +47,30 @@ void	generate_name(char dest[MAX_SEM_NAME], char source[], int philo_num)
 		i++;
 		num /= 10;
 	}
-	while (philo_num)
+	while (id)
 	{
-		dest[i] = philo_num % 10 + '0';
+		dest[i] = id % 10 + '0';
 		i++;
-		philo_num /= 10;
+		id /= 10;
 	}
 	dest[i] = 0;
+}
+
+sem_t	*create_sem(char *name, int number, int id)
+{
+	sem_t	*semaphore;
+	char	sem_name[100];
+
+	generate_name(sem_name, name, id);
+	semaphore = sem_open(sem_name, O_CREAT | O_EXCL,
+			S_IRWXU | S_IRWXG | S_IRWXO, number);
+	sem_unlink(sem_name);
+	if (semaphore == SEM_FAILED)
+	{
+		printf("Error creating semaphore '%s'\n", sem_name);
+		perror(NULL);
+	}
+	return (semaphore);
 }
 
 int	display_msg(t_global_data *data, const char *msg, char *color)
@@ -61,16 +78,18 @@ int	display_msg(t_global_data *data, const char *msg, char *color)
 	long	timestamp_in_ms;
 
 	sem_wait(data->write_sem);
-	data->double_check_sem = sem_open(data->double_check_sem_name, 0);
-	if (data->double_check_sem == SEM_FAILED)
+	timestamp_in_ms = get_current_time_ms() - data->initial_time;
+	sem_wait(data->data_sem);
+	if (data->is_dead
+		|| get_current_time_ms() >= data->last_eat + data->time_to_die)
 	{
 		sem_post(data->write_sem);
+		sem_post(data->data_sem);
 		return (1);
 	}
-	timestamp_in_ms = get_current_time_ms() - data->initial_time;
+	sem_post(data->data_sem);
 	printf("%s%-5li %i %s\001\e[0m\002\n", color, timestamp_in_ms,
 		data->philo_number, msg);
-	sem_close(data->double_check_sem);
 	sem_post(data->write_sem);
 	return (0);
 }
