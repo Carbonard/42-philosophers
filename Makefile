@@ -13,7 +13,7 @@ OBJ = $(SRC_NAMES:%=$(DIR_OBJ)/ft_philo_%.o)
 NAME_BONUS = philo_bonus
 DIR_BONUS = src_bonus
 DIR_OBJ_BONUS = obj_bonus
-SRC_NAMES_BONUS =  input main manage_philos monitor routine utils
+SRC_NAMES_BONUS =  input main manage_philos monitor routine utils setters getters
 SRC_BONUS = $(SRC_NAMES_BONUS:%=$(DIR_BONUS)/ft_philo_%_bonus.c)
 OBJ_BONUS = $(SRC_NAMES_BONUS:%=$(DIR_OBJ_BONUS)/ft_philo_%_bonus.o)
 
@@ -55,10 +55,8 @@ debug:
 	cc $(CFLAGS) $(DFLAGS) src/*.c -o philo
 
 clean:
-	rm -f /dev/shm/sem.*
 	rm -rf $(DIR_OBJ)
 	rm -rf $(DIR_OBJ_BONUS)
-# 	@ ipcrm --posix-semaphore /<name>
 
 fclean: clean
 	rm -f $(NAME) $(NAME_BONUS)

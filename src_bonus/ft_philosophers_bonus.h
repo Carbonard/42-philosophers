@@ -6,7 +6,7 @@
 /*   By: rselva-2 <rselva-2@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/19 19:16:29 by rselva-2          #+#    #+#             */
-/*   Updated: 2026/04/28 17:36:56 by rselva-2         ###   ########.fr       */
+/*   Updated: 2026/05/03 23:53:20 by rselva-2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,38 +44,63 @@ enum e_error
 	ERROR_JOIN_THREADS,
 };
 
+typedef struct s_protected_int
+{
+	int		content;
+	sem_t	*sem;
+}	t_protected_int;
+
+typedef struct s_protected_uint
+{
+	unsigned int	content;
+	sem_t			*sem;
+}	t_protected_uint;
+
+typedef struct s_protected_size_t
+{
+	size_t	content;
+	sem_t	*sem;
+}	t_protected_size_t;
+
 typedef struct s_global_data
 {
-	unsigned int	number_of_philosophers;
-	unsigned int	philo_number;
-	useconds_t		time_to_die;
-	useconds_t		time_to_eat;
-	useconds_t		time_to_sleep;
-	long			number_of_times_each_philosopher_must_eat;
-	long			meals;
-	size_t			initial_time;
-	int				is_dead;
-	size_t			last_eat;
-	sem_t			*forks_sem;
-	sem_t			*write_sem;
-	sem_t			*death_sem;
-	sem_t			*data_sem;
-	sem_t			*control_sem;
-	sem_t			*iteration_sem;
+	unsigned int		number_of_philosophers;
+	unsigned int		philo_number;
+	useconds_t			time_to_die;
+	useconds_t			time_to_eat;
+	useconds_t			time_to_sleep;
+	long				number_of_times_each_philosopher_must_eat;
+	t_protected_uint	meals;
+	t_protected_int		finished;
+	size_t				initial_time;
+	t_protected_size_t	last_eat;
+	sem_t				*forks_sem;
+	sem_t				*write_sem;
+	sem_t				*control_sem;
+	sem_t				*iteration_sem;
+	sem_t				*death_sem;
 }	t_global_data;
 
-int		check_input(int argc, char **argv);
-void	save_data(int argc, char **argv, t_global_data *data);
-size_t	get_current_time_ms(void);
-int		manage_philosophers(t_global_data *g_data);
-void	create_death_monitor(
-			t_global_data *data, pthread_t *monitor, pthread_t *sim_monitor);
-void	philo_routine(t_global_data *data);
-sem_t	*create_sem(char *name, int num, int id);
-int		display_msg(t_global_data *data, const char *msg, char *color);
-void	display_death(t_global_data *data);
-void	close_semaphores(t_global_data *data);
-void	*monitorize_iterations(void *arg);
-void	*stop_simulation(void *args);
+int				check_input(int argc, char **argv);
+void			save_data(int argc, char **argv, t_global_data *data);
+size_t			get_current_time_ms(void);
+int				manage_philosophers(t_global_data *g_data);
+void			create_death_monitor(t_global_data *data, pthread_t *monitor,
+					pthread_t *sim_monitor);
+void			philo_routine(t_global_data *data);
+sem_t			*create_sem(char *name, int num, int id);
+int				display_msg(t_global_data *data, const char *msg, char *color);
+void			display_death(t_global_data *data);
+void			close_semaphores(t_global_data *data);
+void			*monitorize_iterations(void *arg);
+void			*stop_simulation(void *args);
+
+int				set_int(t_protected_int *p_var, int new_value);
+unsigned int	set_uint(t_protected_uint *p_var, unsigned int new_value);
+void			add_one_uint(t_protected_uint *p_var);
+size_t			set_size_t(t_protected_size_t *p_var, size_t new_value);
+int				get_int(t_protected_int *p_var);
+unsigned int	get_uint(t_protected_uint *p_var);
+size_t			get_size_t(t_protected_size_t *p_var);
 
 #endif

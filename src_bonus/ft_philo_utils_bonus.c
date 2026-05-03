@@ -6,7 +6,7 @@
 /*   By: rselva-2 <rselva-2@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/19 23:01:27 by rselva-2          #+#    #+#             */
-/*   Updated: 2026/04/28 17:59:00 by rselva-2         ###   ########.fr       */
+/*   Updated: 2026/05/03 23:52:13 by rselva-2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,15 +79,13 @@ int	display_msg(t_global_data *data, const char *msg, char *color)
 
 	sem_wait(data->write_sem);
 	timestamp_in_ms = get_current_time_ms() - data->initial_time;
-	sem_wait(data->data_sem);
-	if (data->is_dead
-		|| get_current_time_ms() >= data->last_eat + data->time_to_die)
+	if (get_int(&data->finished) != 0
+		|| get_current_time_ms()
+		>= get_size_t(&data->last_eat) + data->time_to_die)
 	{
 		sem_post(data->write_sem);
-		sem_post(data->data_sem);
 		return (1);
 	}
-	sem_post(data->data_sem);
 	printf("%s%-5li %i %s\001\e[0m\002\n", color, timestamp_in_ms,
 		data->philo_number, msg);
 	sem_post(data->write_sem);

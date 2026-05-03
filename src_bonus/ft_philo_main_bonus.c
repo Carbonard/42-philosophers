@@ -6,7 +6,7 @@
 /*   By: rselva-2 <rselva-2@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/19 18:30:16 by rselva-2          #+#    #+#             */
-/*   Updated: 2026/04/23 00:19:19 by rselva-2         ###   ########.fr       */
+/*   Updated: 2026/05/03 19:59:45 by rselva-2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ int	main(int argc, char **argv)
 		save_data(argc, argv, &g_data);
 	else
 		return (1);
-	g_data.initial_time = get_current_time_ms();
 	if (manage_philosophers(&g_data))
 		return (1);
 	return (0);
