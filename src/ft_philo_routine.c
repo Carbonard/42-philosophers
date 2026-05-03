@@ -6,25 +6,11 @@
 /*   By: rselva-2 <rselva-2@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/19 23:00:14 by rselva-2          #+#    #+#             */
-/*   Updated: 2026/05/02 16:38:36 by rselva-2         ###   ########.fr       */
+/*   Updated: 2026/05/02 18:50:20 by rselva-2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_philosophers.h"
-
-static int	wait_ms(t_philo_data *data, useconds_t msec)
-{
-	size_t	init_time;
-
-	init_time = get_current_time_ms();
-	while (get_current_time_ms() < init_time + msec)
-	{
-		if (get_int(data->any_death) != 0)
-			return (1);
-		usleep(100);
-	}
-	return (0);
-}
 
 static int	display_msg(const t_philo_data *data, const char *msg, char *color)
 {
@@ -50,7 +36,7 @@ static void	take_fork(t_protected_int *fork, t_protected_int *any_death)
 	previous_value = set_int(fork, 0);
 	while (previous_value == 0 && get_int(any_death) == 0)
 	{
-		usleep(100);
+		usleep(10);
 		previous_value = set_int(fork, 0);
 	}
 }
@@ -73,6 +59,16 @@ static int	eat(t_philo_data *data)
 	return (0);
 }
 
+void	start_setup(t_philo_data *data)
+{
+	while (data->initial_time == 0)
+	{
+		usleep(10);
+		data->initial_time = get_size_t(data->start_time);
+	}
+	set_size_t(data->last_eat, data->initial_time);
+}
+
 void	*philo_routine(void *arg)
 {
 	t_philo_data	*data;
@@ -80,9 +76,7 @@ void	*philo_routine(void *arg)
 
 	data = (t_philo_data *)arg;
 	iterations = 0;
-	while (data->initial_time == 0)
-		data->initial_time = get_size_t(data->start_time);
-	set_size_t(data->last_eat, data->initial_time);
+	start_setup(data);
 	while (get_int(data->any_death) == 0)
 	{
 		if (eat(data))

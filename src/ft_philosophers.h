@@ -6,7 +6,7 @@
 /*   By: rselva-2 <rselva-2@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/19 19:16:29 by rselva-2          #+#    #+#             */
-/*   Updated: 2026/05/02 16:09:08 by rselva-2         ###   ########.fr       */
+/*   Updated: 2026/05/03 15:35:51 by rselva-2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,8 +94,9 @@ typedef struct s_philo_data
 int				check_input(int argc, char **argv);
 void			save_data(int argc, char **argv, t_global_data *data);
 size_t			get_current_time_ms(void);
+int				wait_ms(t_philo_data *data, useconds_t msec);
 int				init_all(t_global_data *g_data, pthread_t **philosophers,
-					t_philo_data **philos_data);
+					t_philo_data **philos_data, pthread_mutex_t ***all_mutex);
 void			fill_philo_data(t_philo_data *p_data, int i,
 					t_global_data *g_data);
 int				manage_philosophers(t_global_data *g_data);

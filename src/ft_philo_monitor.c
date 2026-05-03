@@ -6,7 +6,7 @@
 /*   By: rselva-2 <rselva-2@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/02 15:14:01 by rselva-2          #+#    #+#             */
-/*   Updated: 2026/05/02 16:36:02 by rselva-2         ###   ########.fr       */
+/*   Updated: 2026/05/02 18:48:56 by rselva-2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,15 +28,14 @@ void	*monitorize(void *arg)
 	unsigned int	i;
 
 	data = (t_global_data *)arg;
-	while (get_size_t(&(data->start_time)) == 0)
-		usleep(data->time_to_die);
-	while (1)
+	while (get_int(&(data->any_death)) == 0)
 	{
 		i = 0;
 		while (i < data->number_of_philosophers)
 		{
 			if (get_size_t(data->last_eats + i)
-				+ (size_t)data->time_to_die <= get_current_time_ms())
+				+ (size_t)data->time_to_die <= get_current_time_ms()
+				&& get_size_t(data->last_eats + i) != 0)
 			{
 				set_int(&(data->any_death), 1);
 				display_death(data, i + 1);
@@ -45,8 +44,8 @@ void	*monitorize(void *arg)
 			i++;
 		}
 		if (get_uint(&(data->finished)) == data->number_of_philosophers)
-			break ;
+			set_int(&(data->any_death), 1);
+		usleep(10);
 	}
-	set_int(&(data->any_death), 1);
 	return (NULL);
 }

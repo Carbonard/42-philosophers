@@ -6,7 +6,7 @@
 /*   By: rselva-2 <rselva-2@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/02 15:18:26 by rselva-2          #+#    #+#             */
-/*   Updated: 2026/05/02 16:27:52 by rselva-2         ###   ########.fr       */
+/*   Updated: 2026/05/03 17:08:37 by rselva-2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,61 +42,56 @@ static int	allocate_mem(t_global_data *g_data, pthread_t **philosophers,
 	return (0);
 }
 
-static int	init_other_mutex(
-		t_global_data *g_data, pthread_mutex_t *mutex_arr[4])
-{
-	unsigned int	i_forks;
-	int				i_mutex;
-
-	i_forks = g_data->number_of_philosophers;
-	i_mutex = 0;
-	while (i_mutex < 4)
-	{
-		if (pthread_mutex_init(mutex_arr[i_mutex], NULL))
-		{
-			printf("Error: pthread_mutex_init failed\n");
-			while (i_forks)
-			{
-				i_forks--;
-				pthread_mutex_destroy(&(g_data->forks[i_forks].mutex));
-			}
-			while (i_mutex)
-			{
-				i_mutex--;
-				pthread_mutex_destroy(mutex_arr[i_mutex]);
-			}
-			return (E_INIT_MUTEX);
-		}
-		i_mutex++;
-	}
-	return (0);
-}
-
-static int	init_mutex(t_global_data *g_data)
+static int	init_mutex_array(pthread_mutex_t **mutex_arr, unsigned int size)
 {
 	unsigned int	i;
-	pthread_mutex_t	*mutex_arr[4];
 
 	i = 0;
-	while (i < g_data->number_of_philosophers)
+	while (i < size)
 	{
-		if (pthread_mutex_init(&(g_data->forks[i].mutex), NULL))
+		if (pthread_mutex_init(mutex_arr[i], NULL))
 		{
-			printf("Error: pthread_mutex_init failed\n");
+			write(2, "Error initializing mutex\n", 25);
 			while (i)
 			{
 				i--;
-				pthread_mutex_destroy(&(g_data->forks[i].mutex));
+				pthread_mutex_destroy(mutex_arr[i]);
 			}
 			return (E_INIT_MUTEX);
 		}
 		i++;
 	}
-	mutex_arr[0] = &(g_data->write_mutex);
-	mutex_arr[1] = &(g_data->any_death.mutex);
-	mutex_arr[2] = &(g_data->start_time.mutex);
-	mutex_arr[3] = &(g_data->finished.mutex);
-	return (init_other_mutex(g_data, mutex_arr));
+	return (0);
+}
+
+static int	init_forks_and_mutex(t_global_data *g_d,
+				pthread_mutex_t ***mutex)
+{
+	unsigned int	i;
+
+	*mutex = malloc(
+			(g_d->number_of_philosophers * 2 + 4) * sizeof(pthread_mutex_t *));
+	if (!*mutex)
+		return (E_MALLOC);
+	i = 0;
+	while (i < g_d->number_of_philosophers)
+	{
+		(*mutex)[i] = &(g_d->forks[i].mutex);
+		(*mutex)[i + g_d->number_of_philosophers] = &(g_d->last_eats[i].mutex);
+		i++;
+	}
+	(*mutex)[i * 2 + 0] = &(g_d->any_death.mutex);
+	(*mutex)[i * 2 + 1] = &(g_d->finished.mutex);
+	(*mutex)[i * 2 + 2] = &(g_d->start_time.mutex);
+	(*mutex)[i * 2 + 3] = &(g_d->write_mutex);
+	if (init_mutex_array(*mutex, g_d->number_of_philosophers * 2 + 4))
+		return (E_INIT_MUTEX);
+	while (i)
+	{
+		i--;
+		set_int(g_d->forks + i, 1);
+	}
+	return (E_SUCCESS);
 }
 
 static int	init_philos(t_global_data *g_data, pthread_t *philosophers,
@@ -124,25 +119,25 @@ static int	init_philos(t_global_data *g_data, pthread_t *philosophers,
 		}
 		i++;
 	}
-	usleep(100);
+	usleep(10000);
 	set_size_t(&(g_data->start_time), get_current_time_ms());
 	return (error);
 }
 
 int	init_all(t_global_data *g_data, pthread_t **philosophers,
-		t_philo_data **philos_data)
+		t_philo_data **philos_data, pthread_mutex_t ***all_mutex)
 {
+	int	error;
+
 	if (allocate_mem(g_data, philosophers, philos_data,
 			g_data->number_of_philosophers))
 	{
 		write(2, "Memory error\n", 13);
 		return (E_MALLOC);
 	}
-	if (init_mutex(g_data))
-	{
-		write(2, "Error initializing mutex\n", 25);
-		return (E_INIT_MUTEX);
-	}
+	error = init_forks_and_mutex(g_data, all_mutex);
+	if (error)
+		return (error);
 	if (init_philos(g_data, *philosophers, *philos_data))
 	{
 		write(2, "Error initializing threads\n", 27);

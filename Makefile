@@ -1,7 +1,7 @@
 .PHONY: all clean fclean re bonus execute_bonus
 
 CFLAGS = -Wall -Wextra -Werror -g3
-DFLAGS = -g3 -fsanitize=address
+DFLAGS = -g3 -fsanitize=undefined
 
 NAME = philo
 DIR = src

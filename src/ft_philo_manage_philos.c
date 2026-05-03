@@ -6,7 +6,7 @@
 /*   By: rselva-2 <rselva-2@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/19 22:58:24 by rselva-2          #+#    #+#             */
-/*   Updated: 2026/05/02 15:50:29 by rselva-2         ###   ########.fr       */
+/*   Updated: 2026/05/03 17:08:43 by rselva-2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,18 +31,18 @@ static int	join_philos(t_global_data *g_data, pthread_t *philosophers)
 	return (error);
 }
 
-static int	destroy_forks(t_global_data *g_data)
+static int	destroy_all_mutex(pthread_mutex_t **mutex_arr, unsigned int size)
 {
 	unsigned int	i;
 	int				error;
 
 	error = 0;
 	i = 0;
-	while (i < g_data->number_of_philosophers)
+	while (i < size)
 	{
-		if (pthread_mutex_destroy(&(g_data->forks[i].mutex)))
+		if (pthread_mutex_destroy(mutex_arr[i]))
 		{
-			printf("Error: pthread_mutex_destroy failed");
+			write(2, "Error destroying mutex\n", 23);
 			error = E_DESTROY_MUTEX;
 		}
 		i++;
@@ -54,10 +54,11 @@ int	manage_philosophers(t_global_data *g_data)
 {
 	pthread_t		*philosophers;
 	t_philo_data	*philos_data;
+	pthread_mutex_t	**all_mutex;
 	pthread_t		monitor;
 	int				error;
 
-	error = init_all(g_data, &philosophers, &philos_data);
+	error = init_all(g_data, &philosophers, &philos_data, &all_mutex);
 	if (error && error != E_INIT_THREADS)
 		exit (error);
 	if (pthread_create(&monitor, NULL, monitorize, (void *)g_data))
@@ -67,11 +68,13 @@ int	manage_philosophers(t_global_data *g_data)
 		set_int(&(g_data->any_death), 1);
 	}
 	error |= join_philos(g_data, philosophers);
-	error |= destroy_forks(g_data);
 	pthread_join(monitor, NULL);
+	error |= destroy_all_mutex(all_mutex,
+			g_data->number_of_philosophers * 2 + 4);
 	free(philosophers);
 	free(g_data->forks);
 	free(philos_data);
 	free(g_data->last_eats);
+	free(all_mutex);
 	return (error);
 }

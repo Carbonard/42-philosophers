@@ -6,7 +6,7 @@
 /*   By: rselva-2 <rselva-2@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/19 20:06:59 by rselva-2          #+#    #+#             */
-/*   Updated: 2026/04/28 14:10:53 by rselva-2         ###   ########.fr       */
+/*   Updated: 2026/05/02 19:00:54 by rselva-2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,14 +49,13 @@ static int	is_valid_int(char *str)
 {
 	if (!ft_is_numeric(str))
 	{
-		printf("Invalid argument: ");
-		printf("%s is not numeric (or it is negative)\n", str);
+		printf("Invalid argument: %s is not numeric (or is negative)\n", str);
 		return (0);
 	}
 	if (ms_atoi(str) == UINT_MAX)
 	{
-		printf("Invalid argument: ");
-		printf("number %s is greater than %d\n", str, UINT_MAX / 1000);
+		printf("Invalid argument: number %s is greater than %d\n",
+			str, UINT_MAX / 1000);
 		return (0);
 	}
 	return (1);
