@@ -6,7 +6,7 @@
 /*   By: rselva-2 <rselva-2@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/19 22:58:24 by rselva-2          #+#    #+#             */
-/*   Updated: 2026/05/03 23:52:43 by rselva-2         ###   ########.fr       */
+/*   Updated: 2026/05/04 00:19:13 by rselva-2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,10 @@ void	close_semaphores(t_global_data *data)
 		sem_close(data->last_eat.sem);
 	if (data->meals.sem != SEM_FAILED)
 		sem_close(data->meals.sem);
+	if (data->death_sem != SEM_FAILED)
+		sem_close(data->death_sem);
+	if (data->iteration_sem != SEM_FAILED)
+		sem_close(data->iteration_sem);
 }
 
 static void	open_semaphores(t_global_data *data)
