@@ -6,7 +6,7 @@
 /*   By: rselva-2 <rselva-2@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/19 23:00:14 by rselva-2          #+#    #+#             */
-/*   Updated: 2026/05/02 18:50:20 by rselva-2         ###   ########.fr       */
+/*   Updated: 2026/05/04 01:55:43 by rselva-2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,8 @@ void	start_setup(t_philo_data *data)
 		usleep(10);
 		data->initial_time = get_size_t(data->start_time);
 	}
+	if (data->number % 2 == 0)
+		wait_ms(data, data->time_to_eat / 2);
 	set_size_t(data->last_eat, data->initial_time);
 }
 
