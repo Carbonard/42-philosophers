@@ -6,7 +6,7 @@
 /*   By: rselva-2 <rselva-2@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/22 22:36:48 by rselva-2          #+#    #+#             */
-/*   Updated: 2026/05/03 23:53:07 by rselva-2         ###   ########.fr       */
+/*   Updated: 2026/05/04 02:35:55 by rselva-2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,8 @@ static void	*monitorize_death(void *arg)
 			sem_wait(data->write_sem);
 			if (get_int(&data->finished) == 0)
 				display_death(data);
-			sem_post(data->death_sem);
+			for (unsigned int i = 0; i <= data->number_of_philosophers; i++)
+				sem_post(data->death_sem);
 			set_int(&data->finished, 1);
 			usleep(10000);
 			sem_post(data->write_sem);
@@ -61,7 +62,6 @@ void	*stop_simulation(void *args)
 
 	data = (t_global_data *)args;
 	sem_wait(data->death_sem);
-	sem_post(data->death_sem);
 	set_int(&data->finished, 1);
 	sem_post(data->iteration_sem);
 	return (NULL);
