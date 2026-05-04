@@ -6,7 +6,7 @@
 /*   By: rselva-2 <rselva-2@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/19 23:00:14 by rselva-2          #+#    #+#             */
-/*   Updated: 2026/05/03 23:50:23 by rselva-2         ###   ########.fr       */
+/*   Updated: 2026/05/04 02:14:15 by rselva-2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,8 @@ void	philo_routine(t_global_data *data)
 	pthread_t	simulation_monitor;
 
 	create_death_monitor(data, &death_monitor, &simulation_monitor);
+	if (data->philo_number % 2 == 0)
+		wait_ms(data, data->time_to_eat / 2);
 	while (get_int(&data->finished) == 0)
 	{
 		if (eat(data))
@@ -86,6 +88,8 @@ void	philo_routine(t_global_data *data)
 		if (wait_ms(data, data->time_to_sleep))
 			break ;
 		if (display_msg(data, "is thinking", GREEN))
+			break ;
+		if (wait_ms(data, 1))
 			break ;
 	}
 	pthread_join(death_monitor, NULL);

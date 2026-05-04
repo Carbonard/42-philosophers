@@ -6,7 +6,7 @@
 /*   By: rselva-2 <rselva-2@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/19 23:00:14 by rselva-2          #+#    #+#             */
-/*   Updated: 2026/05/04 01:55:43 by rselva-2         ###   ########.fr       */
+/*   Updated: 2026/05/04 02:10:17 by rselva-2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,8 @@ void	*philo_routine(void *arg)
 		if (wait_ms(data, data->time_to_sleep))
 			break ;
 		if (display_msg(data, "is thinking", GREEN))
+			break ;
+		if (wait_ms(data, 1))
 			break ;
 	}
 	return (NULL);
