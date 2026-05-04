@@ -6,7 +6,7 @@
 /*   By: rselva-2 <rselva-2@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/19 23:00:14 by rselva-2          #+#    #+#             */
-/*   Updated: 2026/05/04 02:10:17 by rselva-2         ###   ########.fr       */
+/*   Updated: 2026/05/04 03:13:56 by rselva-2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ static void	take_fork(t_protected_int *fork, t_protected_int *any_death)
 	previous_value = set_int(fork, 0);
 	while (previous_value == 0 && get_int(any_death) == 0)
 	{
-		usleep(10);
+		usleep(100);
 		previous_value = set_int(fork, 0);
 	}
 }

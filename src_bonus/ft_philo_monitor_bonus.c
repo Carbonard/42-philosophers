@@ -6,7 +6,7 @@
 /*   By: rselva-2 <rselva-2@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/22 22:36:48 by rselva-2          #+#    #+#             */
-/*   Updated: 2026/05/04 02:35:55 by rselva-2         ###   ########.fr       */
+/*   Updated: 2026/05/04 04:19:20 by rselva-2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ void	*monitorize_iterations(void *arg)
 static void	*monitorize_death(void *arg)
 {
 	t_global_data	*data;
+	unsigned int	i;
 
 	data = (t_global_data *)arg;
 	while (get_int(&data->finished) == 0)
@@ -45,10 +46,14 @@ static void	*monitorize_death(void *arg)
 			sem_wait(data->write_sem);
 			if (get_int(&data->finished) == 0)
 				display_death(data);
-			for (unsigned int i = 0; i <= data->number_of_philosophers; i++)
+			i = 0;
+			while (i <= data->number_of_philosophers)
+			{
 				sem_post(data->death_sem);
+				i++;
+			}
 			set_int(&data->finished, 1);
-			usleep(10000);
+			usleep(1000);
 			sem_post(data->write_sem);
 			break ;
 		}
