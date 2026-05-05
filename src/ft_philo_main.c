@@ -6,7 +6,7 @@
 /*   By: rselva-2 <rselva-2@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/19 18:30:16 by rselva-2          #+#    #+#             */
-/*   Updated: 2026/05/02 13:04:54 by rselva-2         ###   ########.fr       */
+/*   Updated: 2026/05/04 13:27:47 by rselva-2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,9 @@ int	main(int argc, char **argv)
 		save_data(argc, argv, &g_data);
 	else
 		return (1);
+	if (g_data.number_of_philosophers == 0
+		|| g_data.number_of_times_each_philosopher_must_eat == 0)
+		return (0);
 	if (manage_philosophers(&g_data))
 		return (1);
 	return (0);

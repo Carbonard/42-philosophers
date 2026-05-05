@@ -6,7 +6,7 @@
 /*   By: rselva-2 <rselva-2@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/19 23:00:14 by rselva-2          #+#    #+#             */
-/*   Updated: 2026/05/04 02:31:46 by rselva-2         ###   ########.fr       */
+/*   Updated: 2026/05/04 13:40:59 by rselva-2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,7 @@ static int	eat(t_global_data *data)
 	sem_wait(data->forks_sem);
 	if (eat_action(data, "has taken a fork", PURPLE))
 		return (1);
-	if (sem_wait(data->forks_sem))
-		return (1);
+	sem_wait(data->forks_sem);
 	if (eat_action(data, "has taken a fork", PURPLE))
 		return (1);
 	set_size_t(&data->last_eat, get_current_time_ms());
