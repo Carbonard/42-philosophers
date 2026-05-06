@@ -6,7 +6,7 @@
 /*   By: rselva-2 <rselva-2@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/19 22:58:24 by rselva-2          #+#    #+#             */
-/*   Updated: 2026/05/03 17:08:43 by rselva-2         ###   ########.fr       */
+/*   Updated: 2026/05/06 15:34:24 by rselva-2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ static int	destroy_all_mutex(pthread_mutex_t **mutex_arr, unsigned int size)
 		if (pthread_mutex_destroy(mutex_arr[i]))
 		{
 			write(2, "Error destroying mutex\n", 23);
+			printf("number: %u\n", i);
 			error = E_DESTROY_MUTEX;
 		}
 		i++;

@@ -6,7 +6,7 @@
 /*   By: rselva-2 <rselva-2@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/02 15:14:01 by rselva-2          #+#    #+#             */
-/*   Updated: 2026/05/04 03:13:52 by rselva-2         ###   ########.fr       */
+/*   Updated: 2026/05/06 13:47:18 by rselva-2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ void	*monitorize(void *arg)
 		i = 0;
 		while (i < data->number_of_philosophers)
 		{
+			usleep(10);
 			if (get_size_t(data->last_eats + i)
 				+ (size_t)data->time_to_die <= get_current_time_ms()
 				&& get_size_t(data->last_eats + i) != 0)
@@ -44,6 +45,7 @@ void	*monitorize(void *arg)
 			}
 			i++;
 		}
+		usleep(100);
 		if (get_uint(&(data->finished)) == data->number_of_philosophers)
 			set_int(&(data->any_death), 1);
 		usleep(100);

@@ -81,6 +81,8 @@ Usage examples:
 ./philo 8 390 200 200
 ```
 
+Due to the nature of the parameters, just non-negative integers are accepted.
+
 # Death conditions
 
 To understand the conditions under which a philosopher will die, one must

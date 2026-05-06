@@ -6,7 +6,7 @@
 /*   By: rselva-2 <rselva-2@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/19 23:00:14 by rselva-2          #+#    #+#             */
-/*   Updated: 2026/05/04 03:13:56 by rselva-2         ###   ########.fr       */
+/*   Updated: 2026/05/06 16:17:59 by rselva-2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,33 +29,50 @@ static int	display_msg(const t_philo_data *data, const char *msg, char *color)
 	return (0);
 }
 
-static void	take_fork(t_protected_int *fork, t_protected_int *any_death)
+static void	take_fork(t_protected_int *fork)
 {
-	int	previous_value;
+	pthread_mutex_lock(&fork->mutex);
+	// while (!set_int(fork, 0))
+	// {
+	// 	if (get_int(any_death))
+	// 		return (1);
+	// 	usleep(500);
+	// }
+	fork->content = 0;
+	// pthread_mutex_unlock(&fork->mutex);
+	// return (0);
+}
 
-	previous_value = set_int(fork, 0);
-	while (previous_value == 0 && get_int(any_death) == 0)
+int	give_forks(t_philo_data *data, int forks_taken)
+{
+	// printf("%u giving %d forks\n", data->number, forks_taken);
+	if (forks_taken)
 	{
-		usleep(100);
-		previous_value = set_int(fork, 0);
+		data->first_fork->content = 1;
+		pthread_mutex_unlock(&data->first_fork->mutex);
 	}
+	if (forks_taken == 2)
+	{
+		data->second_fork->content = 1;
+		pthread_mutex_unlock(&data->second_fork->mutex);
+	}
+	return (1);
 }
 
 static int	eat(t_philo_data *data)
 {
-	take_fork(data->first_fork, data->any_death);
+	take_fork(data->first_fork);
 	if (display_msg(data, "has taken a fork", PURPLE))
-		return (1);
-	take_fork(data->second_fork, data->any_death);
+		return (give_forks(data, 1));
+	take_fork(data->second_fork);
 	if (display_msg(data, "has taken a fork", PURPLE))
-		return (1);
+		return (give_forks(data, 2));
 	if (display_msg(data, "is eating", YELLOW))
-		return (1);
+		return (give_forks(data, 2));
 	set_size_t(data->last_eat, get_current_time_ms());
 	if (wait_ms(data, data->time_to_eat))
-		return (1);
-	set_int(data->first_fork, 1);
-	set_int(data->second_fork, 1);
+		return (give_forks(data, 2));
+	give_forks(data, 2);
 	return (0);
 }
 
@@ -66,9 +83,9 @@ void	start_setup(t_philo_data *data)
 		usleep(10);
 		data->initial_time = get_size_t(data->start_time);
 	}
+	set_size_t(data->last_eat, data->initial_time);
 	if (data->number % 2 == 0)
 		wait_ms(data, data->time_to_eat / 2);
-	set_size_t(data->last_eat, data->initial_time);
 }
 
 void	*philo_routine(void *arg)
