@@ -6,7 +6,7 @@
 /*   By: rselva-2 <rselva-2@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/19 19:16:29 by rselva-2          #+#    #+#             */
-/*   Updated: 2026/05/03 15:35:51 by rselva-2         ###   ########.fr       */
+/*   Updated: 2026/05/07 23:05:28 by rselva-2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,7 @@ typedef struct s_philo_data
 	useconds_t			time_to_eat;
 	useconds_t			time_to_sleep;
 	long				number_of_times_each_philosopher_must_eat;
+	unsigned int		total_philos;
 	size_t				initial_time;
 	t_protected_size_t	*last_eat;
 	t_protected_int		*first_fork;

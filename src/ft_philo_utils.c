@@ -6,7 +6,7 @@
 /*   By: rselva-2 <rselva-2@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/19 23:01:27 by rselva-2          #+#    #+#             */
-/*   Updated: 2026/05/02 18:44:49 by rselva-2         ###   ########.fr       */
+/*   Updated: 2026/05/08 13:42:38 by rselva-2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int	wait_ms(t_philo_data *data, useconds_t msec)
 	{
 		if (get_int(data->any_death) != 0)
 			return (1);
-		usleep(100);
+		usleep(500);
 	}
 	return (0);
 }
@@ -62,10 +62,10 @@ void	fill_philo_data(t_philo_data *p_data, int i, t_global_data *g_data)
 		p_data->second_fork = g_data->forks + i;
 	}
 	p_data->start_time = &(g_data->start_time);
-	p_data->initial_time = 0;
 	p_data->last_eat = g_data->last_eats + i;
 	set_size_t(p_data->last_eat, 0);
 	p_data->any_death = &(g_data->any_death);
 	p_data->finished = &(g_data->finished);
 	p_data->write_mutex = &(g_data->write_mutex);
+	p_data->total_philos = g_data->number_of_philosophers;
 }

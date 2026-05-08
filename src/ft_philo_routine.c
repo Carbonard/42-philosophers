@@ -6,7 +6,7 @@
 /*   By: rselva-2 <rselva-2@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/19 23:00:14 by rselva-2          #+#    #+#             */
-/*   Updated: 2026/05/06 16:17:59 by rselva-2         ###   ########.fr       */
+/*   Updated: 2026/05/08 13:42:33 by rselva-2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,18 +29,13 @@ static int	display_msg(const t_philo_data *data, const char *msg, char *color)
 	return (0);
 }
 
-static void	take_fork(t_protected_int *fork)
+static int	take_fork(t_protected_int *fork)
 {
 	pthread_mutex_lock(&fork->mutex);
-	// while (!set_int(fork, 0))
-	// {
-	// 	if (get_int(any_death))
-	// 		return (1);
-	// 	usleep(500);
-	// }
+	if (fork->content == 0)
+		return (1);
 	fork->content = 0;
-	// pthread_mutex_unlock(&fork->mutex);
-	// return (0);
+	return (0);
 }
 
 int	give_forks(t_philo_data *data, int forks_taken)
@@ -48,11 +43,15 @@ int	give_forks(t_philo_data *data, int forks_taken)
 	// printf("%u giving %d forks\n", data->number, forks_taken);
 	if (forks_taken)
 	{
+		if (data->first_fork->content == 1)
+			return (1);
 		data->first_fork->content = 1;
 		pthread_mutex_unlock(&data->first_fork->mutex);
 	}
 	if (forks_taken == 2)
 	{
+		if (data->second_fork->content == 1)
+			return (1);
 		data->second_fork->content = 1;
 		pthread_mutex_unlock(&data->second_fork->mutex);
 	}
@@ -61,10 +60,14 @@ int	give_forks(t_philo_data *data, int forks_taken)
 
 static int	eat(t_philo_data *data)
 {
-	take_fork(data->first_fork);
+	if (take_fork(data->first_fork))
+		return (give_forks(data, 0));
 	if (display_msg(data, "has taken a fork", PURPLE))
 		return (give_forks(data, 1));
-	take_fork(data->second_fork);
+	if (data->first_fork == data->second_fork)
+		return (give_forks(data, 1));
+	if (take_fork(data->second_fork))
+		return (give_forks(data, 1));
 	if (display_msg(data, "has taken a fork", PURPLE))
 		return (give_forks(data, 2));
 	if (display_msg(data, "is eating", YELLOW))
@@ -78,6 +81,7 @@ static int	eat(t_philo_data *data)
 
 void	start_setup(t_philo_data *data)
 {
+	data->initial_time = 0;
 	while (data->initial_time == 0)
 	{
 		usleep(10);
@@ -109,8 +113,8 @@ void	*philo_routine(void *arg)
 			break ;
 		if (display_msg(data, "is thinking", GREEN))
 			break ;
-		if (wait_ms(data, 1))
-			break ;
+		if (data->total_philos % 2)
+			usleep(1000);
 	}
 	return (NULL);
 }
