@@ -6,7 +6,7 @@
 /*   By: rselva-2 <rselva-2@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/19 20:06:59 by rselva-2          #+#    #+#             */
-/*   Updated: 2026/04/28 14:11:19 by rselva-2         ###   ########.fr       */
+/*   Updated: 2026/05/28 16:22:21 by rselva-2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,11 +36,11 @@ static unsigned int	ms_atoi(char *str)
 	while (str[i])
 	{
 		if (i > 10)
-			return (-1);
+			return (UINT_MAX);
 		number = number * 10 + str[i] - '0';
 		i++;
 	}
-	if (number > UINT_MAX / 1000)
+	if (number > UINT_MAX / 10)
 		return (UINT_MAX);
 	return (number);
 }
@@ -56,7 +56,7 @@ static int	is_valid_int(char *str)
 	if (ms_atoi(str) == UINT_MAX)
 	{
 		printf("Invalid argument: ");
-		printf("number %s is greater than %d\n", str, UINT_MAX / 1000);
+		printf("number %s is greater than %d\n", str, UINT_MAX / 10);
 		return (0);
 	}
 	return (1);

@@ -6,7 +6,7 @@
 /*   By: rselva-2 <rselva-2@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/19 23:00:14 by rselva-2          #+#    #+#             */
-/*   Updated: 2026/05/08 13:42:33 by rselva-2         ###   ########.fr       */
+/*   Updated: 2026/05/31 15:59:13 by rselva-2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,6 @@ static int	take_fork(t_protected_int *fork)
 
 int	give_forks(t_philo_data *data, int forks_taken)
 {
-	// printf("%u giving %d forks\n", data->number, forks_taken);
 	if (forks_taken)
 	{
 		if (data->first_fork->content == 1)

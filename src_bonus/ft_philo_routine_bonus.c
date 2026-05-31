@@ -6,7 +6,7 @@
 /*   By: rselva-2 <rselva-2@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/19 23:00:14 by rselva-2          #+#    #+#             */
-/*   Updated: 2026/05/04 13:40:59 by rselva-2         ###   ########.fr       */
+/*   Updated: 2026/05/08 13:48:15 by rselva-2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int	wait_ms(t_global_data *data, useconds_t msec)
 	{
 		if (get_int(&data->finished) != 0)
 			return (1);
-		usleep(100);
+		usleep(500);
 	}
 	return (0);
 }

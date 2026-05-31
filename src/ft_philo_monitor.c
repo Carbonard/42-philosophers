@@ -6,7 +6,7 @@
 /*   By: rselva-2 <rselva-2@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/02 15:14:01 by rselva-2          #+#    #+#             */
-/*   Updated: 2026/05/08 13:40:20 by rselva-2         ###   ########.fr       */
+/*   Updated: 2026/05/28 16:36:47 by rselva-2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	*monitorize(void *arg)
 		}
 		if (get_uint(&(data->finished)) == data->number_of_philosophers)
 			set_int(&(data->any_death), 1);
-		usleep(100);
+		usleep(700);
 	}
 	return (NULL);
 }

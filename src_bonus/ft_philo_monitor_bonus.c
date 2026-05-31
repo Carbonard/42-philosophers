@@ -6,7 +6,7 @@
 /*   By: rselva-2 <rselva-2@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/22 22:36:48 by rselva-2          #+#    #+#             */
-/*   Updated: 2026/05/05 09:42:28 by rselva-2         ###   ########.fr       */
+/*   Updated: 2026/05/08 15:15:28 by rselva-2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ static void	*monitorize_death(void *arg)
 			sem_post(data->write_sem);
 			break ;
 		}
+		usleep(1000);
 	}
 	return (NULL);
 }
